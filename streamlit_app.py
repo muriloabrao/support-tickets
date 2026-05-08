@@ -203,7 +203,7 @@ with st.sidebar:
     with st.expander("O robô não processou minha Cadeia de Custódia"):
         st.markdown("Verifique se o arquivo está no formato PDF e se a leitura está nítida. Se o robô não capturar os dados em 10 minutos, abra um ticket informando o número da amostra.")
     with st.expander("Como acompanho meu chamado?"):
-        st.markdown("Após enviar, você receberá um Ticket ID. Use-o para consultar o status no painel do Notion.")
+        st.markdown("Após enviar, você receberá um Ticket ID. Use-o para consultar o status no [Painel do Notion](https://www.notion.so/c184c9ec3f9f4d03a5cd472f050afed0?v=c9f02267057e46e5be51d0a1b6451f2d).")
     with st.expander("Posso enviar imagens e prints?"):
         st.markdown("Sim! Use o campo 'Anexar Arquivo' no formulário. Aceitamos imagens, PDFs e vídeos curtos.")
         
