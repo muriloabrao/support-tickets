@@ -66,17 +66,19 @@ def get_secret(key):
 # --- CONEXÃO COM GOOGLE DRIVE ---
 def upload_to_drive(file, folder_id):
     try:
-        creds_info = get_secret("GOOGLE_SERVICE_ACCOUNT")
+        # Garantir que o ponteiro do arquivo esteja no início
+        file.seek(0)
+        scopes = ['https://www.googleapis.com/auth/drive']
         if not creds_info:
             creds_path = get_secret("GOOGLE_APPLICATION_CREDENTIALS")
             if creds_path and os.path.exists(creds_path):
-                creds = service_account.Credentials.from_service_account_file(creds_path)
+                creds = service_account.Credentials.from_service_account_file(creds_path, scopes=scopes)
             else:
                 return None, "Credenciais do Google não configuradas."
         else:
             if isinstance(creds_info, str):
                 creds_info = json.loads(creds_info)
-            creds = service_account.Credentials.from_service_account_info(creds_info)
+            creds = service_account.Credentials.from_service_account_info(creds_info, scopes=scopes)
 
         service = build('drive', 'v3', credentials=creds)
         
@@ -268,6 +270,7 @@ if submitted:
                     link, error = upload_to_drive(uploaded_file, folder_id)
                     if error:
                         st.warning(f"⚠️ Não foi possível anexar o arquivo, mas seu ticket será enviado normalmente.")
+                        st.error(f"Erro técnico do Drive: {error}")
                         print(f"[DRIVE ERROR] {error}")
                     else:
                         attachment_url = link
