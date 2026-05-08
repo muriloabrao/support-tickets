@@ -145,7 +145,7 @@ with st.form("ticket_form", clear_on_submit=True):
     
     col_a, col_b = st.columns(2)
     with col_a:
-        depto = st.selectbox("Seu Departamento *", ["TI", "Engenharia", "Comercial", "Operações", "Financeiro", "RH", "Outro"])
+        depto = st.selectbox("Seu Departamento *", ["Analítica", "Planejamentos", "Engenharia", "Comercial", "Operações", "Financeiro", "RH", "ADM", "Outro"])
         system = st.selectbox("Sistema com Problema *", ["Plandoc", "Mylims Producer", "Mylims Consumer", "Outro"])
     with col_b:
         priority = st.selectbox("Prioridade *", ["Low", "Medium", "High"])
@@ -159,7 +159,7 @@ if submitted:
     if not name or not email or not depto or not issue:
         st.error("Por favor, preencha todos os campos obrigatórios (*)")
     else:
-        with st.spinner("Enviando seu ticket..."):
+        with st.spinner("Enviando seu ticket, aguarde até a finalização..."):
             attachment_url = None
             folder_id = get_secret("DRIVE_FOLDER_ID") or "1jBmbD2UlWVRafckTK6A0QYYU4A9VkgMT"
             
@@ -171,5 +171,5 @@ if submitted:
                     attachment_url = link
             
             create_ticket_in_notion(name, email, depto, issue, priority, system, attachment_url)
-            st.success("Ticket enviado com sucesso! Verifique seu Notion.")
+            st.success("Ticket enviado com sucesso! [Clique aqui](https://www.notion.so/c184c9ec3f9f4d03a5cd472f050afed0?v=c9f02267057e46e5be51d0a1b6451f2d&source=copy_link) e verifique no Notion, não é necessário criar uma conta.")
             st.balloons()
