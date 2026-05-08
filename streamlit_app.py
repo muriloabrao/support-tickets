@@ -196,14 +196,14 @@ def is_valid_email(email):
 # Offline Check
 if not notion or not DATABASE_ID:
     st.error("⚠️ Sistema temporariamente indisponível. Tente novamente em alguns minutos.")
-    st.info("📧 Para urgências, envie um email para suporte@grupoep.com.br")
+    st.info("📧 Para urgências, envie um email para ti@grupoep.com.br")
     st.stop()
 
 # --- SIDEBAR (Sprint 5) ---
 with st.sidebar:
     st.markdown("## 📞 Contato Direto")
     st.markdown("Para emergências, entre em contato:")
-    st.markdown("📧 suporte@grupoep.com.br")
+    st.markdown("📧 ti@grupoep.com.br")
     st.markdown("---")
     
     st.markdown("## ❓ Perguntas Frequentes")
@@ -303,5 +303,5 @@ if submitted:
                 st.balloons()
             except Exception as e:
                 st.error("😔 Não foi possível enviar seu ticket neste momento.")
-                st.warning("Tente novamente em alguns minutos. Se o problema persistir, entre em contato diretamente: suporte@grupoep.com.br")
+                st.warning("Tente novamente em alguns minutos. Se o problema persistir, entre em contato diretamente: ti@grupoep.com.br")
                 st.exception(e)
