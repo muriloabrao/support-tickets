@@ -69,6 +69,8 @@ def upload_to_drive(file, folder_id):
         # Garantir que o ponteiro do arquivo esteja no início
         file.seek(0)
         scopes = ['https://www.googleapis.com/auth/drive']
+        creds_info = get_secret("GOOGLE_SERVICE_ACCOUNT")
+        
         if not creds_info:
             creds_path = get_secret("GOOGLE_APPLICATION_CREDENTIALS")
             if creds_path and os.path.exists(creds_path):
