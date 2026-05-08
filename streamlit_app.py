@@ -200,8 +200,8 @@ with st.sidebar:
     st.markdown("## ❓ Perguntas Frequentes")
     with st.expander("Esqueci minha senha do Plandoc"):
         st.markdown("Clique em 'Esqueci minha senha' na tela de login. Se não receber o email em 5 minutos, abra um ticket.")
-    with st.expander("Mylims não está carregando"):
-        st.markdown("Tente limpar o cache do navegador (Ctrl+Shift+Delete) e acessar novamente. Se persistir, abra um ticket.")
+    with st.expander("O robô não processou minha Cadeia de Custódia"):
+        st.markdown("Verifique se o arquivo está no formato PDF e se a leitura está nítida. Se o robô não capturar os dados em 10 minutos, abra um ticket informando o número da amostra.")
     with st.expander("Como acompanho meu chamado?"):
         st.markdown("Após enviar, você receberá um Ticket ID. Use-o para consultar o status no painel do Notion.")
     with st.expander("Posso enviar imagens e prints?"):
