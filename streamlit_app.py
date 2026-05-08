@@ -80,6 +80,11 @@ def upload_to_drive(file, folder_id):
         else:
             if isinstance(creds_info, str):
                 creds_info = json.loads(creds_info)
+            
+            # Correção para quebra de linha na private_key (comum no Streamlit Cloud)
+            if "private_key" in creds_info:
+                creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")
+                
             creds = service_account.Credentials.from_service_account_info(creds_info, scopes=scopes)
 
         service = build('drive', 'v3', credentials=creds)
