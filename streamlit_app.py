@@ -14,7 +14,7 @@ import json
 load_dotenv()
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
-st.set_page_config(page_title="Ticketeria do Murilo", page_icon="🎫", layout="centered")
+st.set_page_config(page_title="EP Resolve", page_icon="🎫", layout="centered")
 
 # --- FUNÇÃO AUXILIAR PARA SECRETOS ---
 def get_secret(key):
@@ -135,9 +135,9 @@ def create_ticket_in_notion(name, email, depto, issue, priority, system, attachm
     )
 
 # --- INTERFACE DO USUÁRIO ---
-st.title("🎫 Ticketeria do Murilo")
-st.markdown("Central de Suporte - Plandoc & MyLims")
-st.info("Preencha os campos abaixo para abrir um ticket de suporte.")
+st.title("🎫 EP Resolve")
+st.markdown("Central Unificada de Suporte - Grupo EP")
+st.info("Relate seu problema abaixo e nós cuidaremos do resto.")
 
 with st.form("ticket_form", clear_on_submit=True):
     name = st.text_input("Seu Nome Completo *")
