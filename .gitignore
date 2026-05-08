@@ -8,6 +8,7 @@
 service_account.json
 credentials JSON/
 *.json
+credenciais streamlit.toml
 
 # Python
 __pycache__/
