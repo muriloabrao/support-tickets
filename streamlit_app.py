@@ -4,6 +4,7 @@ import pandas as pd
 from notion_client import Client
 import os
 import re
+import requests
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
@@ -199,16 +200,31 @@ CLOSED_STATUSES = ["Closed", "Resolvido"]
 def get_ticket_from_notion(ticket_id):
     """Consulta o Notion pelo Ticket ID. Retorna status atual, page_id e se já foi avaliado."""
     try:
-        results = notion.databases.query(
-            database_id=DATABASE_ID,
-            filter={
+        # Bypassing the Notion SDK entirely and making a direct raw HTTP request
+        token = get_secret("NOTION_TOKEN")
+        url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Notion-Version": "2022-06-28",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "filter": {
                 "property": "Ticket ID",
                 "rich_text": {"equals": ticket_id}
             }
-        )
-        if not results["results"]:
+        }
+        
+        response = requests.post(url, headers=headers, json=payload)
+        
+        if response.status_code != 200:
+            return {"error": f"API Error: {response.text}"}
+            
+        data = response.json()
+        if not data.get("results"):
             return None
-        page = results["results"][0]
+            
+        page = data["results"][0]
         props = page["properties"]
         status = props.get("Status", {}).get("status", {}).get("name", "")
         rating = props.get("Rating", {}).get("number")
