@@ -193,10 +193,128 @@ def is_valid_email(email):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(pattern, email) is not None
 
+# --- FUNÇÕES DE FEEDBACK ---
+CLOSED_STATUSES = ["Closed", "Resolvido"]
+
+def get_ticket_from_notion(ticket_id):
+    """Consulta o Notion pelo Ticket ID. Retorna status atual, page_id e se já foi avaliado."""
+    try:
+        results = notion.databases.query(
+            database_id=DATABASE_ID,
+            filter={
+                "property": "Ticket ID",
+                "rich_text": {"equals": ticket_id}
+            }
+        )
+        if not results["results"]:
+            return None
+        page = results["results"][0]
+        props = page["properties"]
+        status = props.get("Status", {}).get("status", {}).get("name", "")
+        rating = props.get("Rating", {}).get("number")
+        return {
+            "page_id": page["id"],
+            "status": status,
+            "already_rated": rating is not None,
+            "rating_value": rating
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+def submit_feedback_to_notion(page_id, rating, comment):
+    """Atualiza a página do ticket no Notion com avaliação e comentário."""
+    properties = {
+        "Rating": {"number": rating},
+        "Rated At": {"date": {"start": datetime.datetime.now().isoformat()}}
+    }
+    if comment and comment.strip():
+        properties["Feedback"] = {
+            "rich_text": [{"type": "text", "text": {"content": comment.strip()}}]
+        }
+    notion.pages.update(page_id=page_id, properties=properties)
+
+def render_feedback_page(ticket_id):
+    """Renderiza a tela de avaliação com base no status atual do ticket no Notion."""
+    st.image("logo ep/Cópia de logo oficial.png", width=250)
+    st.title("⭐ Avalie seu Atendimento")
+    st.markdown(f"Ticket: **`{ticket_id}`**")
+    st.markdown("---")
+
+    with st.spinner("Verificando status do chamado..."):
+        ticket = get_ticket_from_notion(ticket_id)
+
+    if ticket is None:
+        st.error("❌ Ticket não encontrado. Verifique se o ID está correto.")
+        return
+
+    if "error" in ticket:
+        st.error(f"Erro ao consultar o chamado: {ticket['error']}")
+        return
+
+    status = ticket["status"]
+
+    if ticket["already_rated"]:
+        nota = int(ticket["rating_value"])
+        stars = "★" * nota + "☆" * (5 - nota)
+        st.success("🎉 Você já avaliou este chamado!")
+        st.markdown(f"### {stars}  ({nota}/5)")
+        st.info("Obrigado pelo seu feedback! Ele é muito importante para melhorarmos nosso atendimento.")
+        return
+
+    if status not in CLOSED_STATUSES:
+        st.warning("⏳ **Seu chamado ainda não foi encerrado.**")
+        st.markdown(f"Status atual: **`{status}`**")
+        st.info(
+            "A avaliação será liberada assim que sua solicitação for marcada como "
+            "**Closed** ou **Resolvido**. Guarde este link e volte quando receber "
+            "a confirmação de encerramento."
+        )
+        return
+
+    # Ticket encerrado e ainda não avaliado — exibir formulário
+    st.success("✅ Chamado encerrado! Que tal nos contar como foi o atendimento?")
+    st.markdown("### Como você avalia o atendimento recebido?")
+
+    rating_options = [
+        "★☆☆☆☆  1 — Muito ruim",
+        "★★☆☆☆  2 — Ruim",
+        "★★★☆☆  3 — Regular",
+        "★★★★☆  4 — Bom",
+        "★★★★★  5 — Excelente!",
+    ]
+    rating_values = {label: i + 1 for i, label in enumerate(rating_options)}
+
+    selected_label = st.radio("Sua nota:", rating_options, index=4)
+    comment = st.text_area(
+        "Deixe um comentário (opcional)",
+        placeholder="O que poderia ter sido melhor? O que funcionou bem?",
+        max_chars=500
+    )
+
+    if st.button("✅ Enviar Avaliação"):
+        rating_value = rating_values[selected_label]
+        try:
+            with st.spinner("Registrando sua avaliação..."):
+                submit_feedback_to_notion(ticket["page_id"], rating_value, comment)
+            st.success("🙏 Obrigado! Sua avaliação foi registrada com sucesso.")
+            st.balloons()
+        except Exception as e:
+            st.error("😔 Não foi possível registrar sua avaliação. Tente novamente.")
+            st.exception(e)
+
 # Offline Check
 if not notion or not DATABASE_ID:
     st.error("⚠️ Sistema temporariamente indisponível. Tente novamente em alguns minutos.")
     st.info("📧 Para urgências, envie um email para ti@grupoep.com.br")
+    st.stop()
+
+# --- ROTEAMENTO ---
+_params = st.query_params
+_current_page = _params.get("page", "form")
+_ticket_id_param = _params.get("ticket_id", "")
+
+if _current_page == "feedback" and _ticket_id_param:
+    render_feedback_page(_ticket_id_param)
     st.stop()
 
 # --- SIDEBAR (Sprint 5) ---
@@ -301,6 +419,17 @@ if submitted:
                 
                 st.markdown("🔗 [Acompanhe todos os chamados no painel do Notion](https://www.notion.so/c184c9ec3f9f4d03a5cd472f050afed0?v=c9f02267057e46e5be51d0a1b6451f2d)")
                 st.balloons()
+
+                # --- LINK DE AVALIAÇÃO ---
+                st.markdown("---")
+                app_url = get_secret("APP_URL") or ""
+                feedback_link = f"{app_url}?page=feedback&ticket_id={ticket_id}"
+                st.markdown("#### 📣 Avalie nosso atendimento quando o chamado for resolvido")
+                st.info(
+                    "Quando seu ticket for encerrado, acesse o link abaixo para nos avaliar. "
+                    "O formulário só ficará ativo após a resolução."
+                )
+                st.code(feedback_link, language=None)
             except Exception as e:
                 st.error("😔 Não foi possível enviar seu ticket neste momento.")
                 st.warning("Tente novamente em alguns minutos. Se o problema persistir, entre em contato diretamente: ti@grupoep.com.br")
