@@ -21,35 +21,112 @@ st.set_page_config(page_title="EP Resolve", page_icon="logo ep/Cópia de logo of
 def inject_custom_css():
     st.markdown("""
     <style>
-        /* Estilo do Container Principal */
+        /* Importando Google Fonts - Inter para visual mais sério e moderno */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* Fonte global */
+        html, body, [class*="css"] {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Estilo do App Principal (Background) */
+        .stApp {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background-attachment: fixed;
+        }
+
+        /* Container Principal */
         .block-container {
             padding-top: 2rem;
             padding-bottom: 2rem;
             max-width: 850px;
         }
 
-        /* Estilização de botões - Azul EP */
-        .stButton>button {
-            width: 100%;
-            border-radius: 12px;
-            height: 3.5em;
-            background-color: #0D6081;
-            color: white;
-            font-weight: 600;
-            border: none;
-            transition: all 0.3s ease;
-        }
-        .stButton>button:hover {
-            background-color: #094a64;
-            box-shadow: 0 4px 15px rgba(13, 96, 129, 0.3);
-            transform: translateY(-2px);
+        /* Glassmorphism para Form e Sidebar */
+        div[data-testid="stForm"], section[data-testid="stSidebar"] > div:first-child {
+            background: rgba(255, 255, 255, 0.4) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+            padding: 20px !important;
         }
 
-        /* Inputs e TextAreas com cantos suaves */
-        .stTextInput>div>div>input, .stTextArea>div>div>textarea {
-            border-radius: 10px;
-            border: 1px solid #EAEDDD;
+        /* Ajuste do fundo da Sidebar */
+        section[data-testid="stSidebar"] {
+            background-color: transparent !important;
         }
+
+        /* Estilização de botões - Azul EP Moderno */
+        .stButton>button, .stFormSubmitButton>button {
+            width: 100%;
+            border-radius: 12px !important;
+            height: 3.5em !important;
+            background: linear-gradient(135deg, #0D6081 0%, #084259 100%) !important;
+            color: white !important;
+            font-weight: 600 !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            box-shadow: 0 4px 15px rgba(13, 96, 129, 0.3) !important;
+            transition: all 0.3s ease !important;
+        }
+        .stButton>button:hover, .stFormSubmitButton>button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(13, 96, 129, 0.4) !important;
+            background: linear-gradient(135deg, #0f7096 0%, #094a64 100%) !important;
+            color: white !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        /* Inputs e TextAreas com Glassmorphism suave */
+        .stTextInput>div>div>input, .stTextArea>div>div>textarea, .stSelectbox>div>div>div {
+            background: rgba(255, 255, 255, 0.6) !important;
+            border-radius: 10px !important;
+            border: 1px solid rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(4px) !important;
+            color: #333 !important;
+            transition: all 0.3s ease !important;
+        }
+        .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus, .stSelectbox>div>div>div:focus {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border: 1px solid #0D6081 !important;
+            box-shadow: 0 0 0 2px rgba(13, 96, 129, 0.2) !important;
+        }
+
+        /* Ajuste nas fontes dos rótulos para melhor legibilidade */
+        .stTextInput label, .stTextArea label, .stSelectbox label, .stFileUploader label {
+            color: #2c3e50 !important;
+            font-weight: 600 !important;
+            font-size: 0.95rem !important;
+        }
+
+        /* Estilização do File Uploader (Glassmorphism) */
+        section[data-testid="stFileUploadDropzone"] {
+            background: rgba(255, 255, 255, 0.4) !important;
+            border: 2px dashed rgba(13, 96, 129, 0.4) !important;
+            border-radius: 12px !important;
+            transition: all 0.3s ease !important;
+        }
+        section[data-testid="stFileUploadDropzone"]:hover {
+            background: rgba(255, 255, 255, 0.7) !important;
+            border-color: #0D6081 !important;
+        }
+
+        /* Expanders (Acordeões) - Glassmorphism */
+        .stExpander {
+            background: rgba(255, 255, 255, 0.4) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.05) !important;
+            margin-bottom: 10px !important;
+        }
+        
+        /* Ocultar elementos desnecessários do Streamlit */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -373,7 +450,7 @@ with st.form("ticket_form", clear_on_submit=False):
     col_a, col_b = st.columns(2)
     with col_a:
         depto = st.selectbox("Seu Departamento *", ["Analítica", "Planejamentos", "Engenharia", "Comercial", "Operações", "Financeiro", "RH", "ADM", "Outro"])
-        system = st.selectbox("Sistema com Problema *", ["Plandoc", "Mylims Producer", "Mylims Consumer", "Google AppScripts", "Google Drive", "Outro"])
+        system = st.selectbox("Sistema com Problema *", ["selecione o sistema para sua solicitação", "Plandoc", "Mylims Producer", "Mylims Consumer", "Google AppScripts", "Google Drive", "Sankhya Flow", "Outro"])
     with col_b:
         priority = st.selectbox("Prioridade *", ["Baixa - Não Urgente", "Média - Importante", "Alta - Urgente"])
         uploaded_file = st.file_uploader(
