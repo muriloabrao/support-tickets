@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* — Neutral System (Slate) — */
+    --background: 220 14% 96%;
+    --foreground: 224 71% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+
+    /* — Accent: Desaturated Teal (#0D6081 calibrated) — */
+    --primary: 197 68% 30%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 224 71% 4%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    --accent: 220 14% 96%;
+    --accent-foreground: 224 71% 4%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 197 68% 30%;
+
+    --radius: 0.75rem;
+
+    /* — Layout tokens — */
+    --sidebar-width: 18rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply text-foreground antialiased;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    background-color: hsl(220 14% 96%);
+    min-height: 100dvh;
+  }
+
+  /* Kill default focus outlines, replace with branded ring */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring/40 ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer components {
+  /* — Sidebar Surface — */
+  .sidebar-surface {
+    background-color: hsl(220 20% 99%);
+    border-right: 1px solid hsl(220 13% 91%);
+    box-shadow:
+      0 0 0 1px hsl(220 13% 91% / 0.5),
+      4px 0 24px -8px hsl(220 20% 10% / 0.04);
+  }
+
+  /* — Content Surface — */
+  .content-surface {
+    background-color: hsl(0 0% 100%);
+    border: 1px solid hsl(220 13% 91% / 0.7);
+    border-radius: 1.25rem;
+    box-shadow:
+      0 1px 2px hsl(220 20% 10% / 0.03),
+      0 8px 24px -4px hsl(220 20% 10% / 0.05);
+  }
+
+  /* — Navigation Item — */
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ease-out;
+    color: hsl(220 9% 46%);
+  }
+
+  .nav-item:hover {
+    color: hsl(224 71% 4%);
+    background-color: hsl(220 14% 96%);
+  }
+
+  .nav-item:active {
+    transform: scale(0.98);
+  }
+
+  .nav-item--active {
+    color: hsl(197 68% 30%);
+    background-color: hsl(197 68% 30% / 0.08);
+    font-weight: 600;
+  }
+
+  .nav-item--active:hover {
+    color: hsl(197 68% 30%);
+    background-color: hsl(197 68% 30% / 0.12);
+  }
+
+  /* — Status Indicator — */
+  .status-dot {
+    @apply w-1.5 h-1.5 rounded-full;
+    animation: pulse-subtle 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .status-dot--ok {
+    background-color: hsl(142 71% 45%);
+    box-shadow: 0 0 6px hsl(142 71% 45% / 0.4);
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* — Section Label — */
+  .section-label {
+    @apply text-[11px] font-semibold uppercase tracking-widest;
+    color: hsl(220 9% 46%);
+    letter-spacing: 0.08em;
+  }
+
+  /* — Logout Button — */
+  .logout-btn {
+    @apply flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-sm font-medium transition-all duration-150 ease-out;
+    color: hsl(220 9% 46%);
+  }
+
+  .logout-btn:hover {
+    color: hsl(0 72% 51%);
+    background-color: hsl(0 72% 51% / 0.06);
+  }
+
+  .logout-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* — Glass Panel (legacy compat for Login, etc.) — */
+  .glass-panel {
+    background-color: hsl(0 0% 100% / 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid hsl(220 13% 91% / 0.8);
+    border-radius: 1.25rem;
+    box-shadow:
+      0 1px 2px hsl(220 20% 10% / 0.04),
+      0 12px 32px -8px hsl(220 20% 10% / 0.08),
+      inset 0 1px 0 hsl(0 0% 100% / 0.6);
+  }
+}
