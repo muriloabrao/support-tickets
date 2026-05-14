@@ -443,6 +443,29 @@ st.title("🎫 EP Resolve")
 st.markdown("Central Unificada de Suporte - Grupo EP")
 st.info("Relate seu problema abaixo e nós cuidaremos do resto.")
 
+# Selectbox de sistema FORA do formulário para reagir imediatamente
+system = st.selectbox(
+    "Sistema para atendimento",
+    ["selecione o sistema para sua solicitação", "Plandoc", "Mylims Producer", "Mylims Consumer", "Google AppScripts", "Google Drive", "Sankhya Flow", "Outro"],
+    key="system_select"
+)
+
+if system == "Plandoc":
+    st.warning(
+        "⚠️ **Atenção — Cadastro de Usuário no Plandoc**\n\n"
+        "Caso sua solicitação seja para **criar um usuário** no Plandoc, não esqueça de informar no campo de descrição:\n"
+        "- 👤 **Nome completo** do usuário\n"
+        "- 📁 **Projetos a serem liberados** (\"Global\" em caso de todos os projetos)\n"
+        "- 📧 **E-mail @grupoep.com.br**\n"
+        "- 🎭 **Papel dentro do Plandoc** (ex: Elaborador, Revisor, Diretor)\n\n"
+        "Sem essas informações **não será possível** a liberação do usuário.\n\n"
+        "---\n"
+        "📋 **Exemplos de como informar:**\n\n"
+        "1. **Maria Oliveira** | Projetos: Global | E-mail: maria.oliveira@grupoep.com.br | Papel: Elaboradora\n\n"
+        "2. **Carlos Santos** | Projetos: Projeto Alpha, Projeto Beta | E-mail: carlos.santos@grupoep.com.br | Papel: Revisor\n\n"
+        "3. **Ana Costa** | Projetos: Projeto Gamma | E-mail: ana.costa@grupoep.com.br | Papel: Diretora"
+    )
+
 with st.form("ticket_form", clear_on_submit=False):
     name = st.text_input("Seu Nome Completo *", help="Ex: João da Silva")
     email = st.text_input("Seu E-mail Corporativo *", help="Ex: joao.silva@grupoep.com.br")
@@ -450,7 +473,6 @@ with st.form("ticket_form", clear_on_submit=False):
     col_a, col_b = st.columns(2)
     with col_a:
         depto = st.selectbox("Seu Departamento *", ["Analítica", "Planejamentos", "Engenharia", "Comercial", "Operações", "Financeiro", "RH", "ADM", "Outro"])
-        system = st.selectbox("Sistema para atendimento", ["selecione o sistema para sua solicitação", "Plandoc", "Mylims Producer", "Mylims Consumer", "Google AppScripts", "Google Drive", "Sankhya Flow", "Outro"])
     with col_b:
         priority = st.selectbox("Prioridade *", ["Baixa - Não Urgente", "Média - Importante", "Alta - Urgente"])
         uploaded_file = st.file_uploader(
@@ -461,22 +483,6 @@ with st.form("ticket_form", clear_on_submit=False):
         
     issue = st.text_area("Descreva o problema em detalhes *", help="Quanto mais detalhes, mais rápido resolveremos. Mínimo 20 caracteres.")
     
-    if system == "Plandoc":
-        st.warning(
-            "⚠️ **Atenção — Cadastro de Usuário no Plandoc**\n\n"
-            "Caso sua solicitação seja para criar um usuário no Plandoc, não esqueça de informar:\n"
-            "- **Nome completo** do usuário\n"
-            "- **Projetos a serem liberados** (\"Global\" em caso de todos os projetos)\n"
-            "- **E-mail @grupoep.com.br**\n"
-            "- **Papel dentro do Plandoc** (ex: Elaborador, Revisor, Diretor)\n\n"
-            "Sem essas informações **não será possível** a liberação do usuário.\n\n"
-            "---\n"
-            "📋 **Exemplos de cadastro:**\n\n"
-            "1. **Maria Oliveira** | Projetos: Global | E-mail: maria.oliveira@grupoep.com.br | Papel: Elaboradora\n\n"
-            "2. **Carlos Santos** | Projetos: Projeto Alpha, Projeto Beta | E-mail: carlos.santos@grupoep.com.br | Papel: Revisor\n\n"
-            "3. **Ana Costa** | Projetos: Projeto Gamma | E-mail: ana.costa@grupoep.com.br | Papel: Diretora"
-        )
-
     submitted = st.form_submit_button("🚀 Enviar Solicitação")
 
 if submitted:
